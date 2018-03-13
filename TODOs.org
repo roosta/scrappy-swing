@@ -1,0 +1,2 @@
+* [[https://www.reddit.com/r/java/comments/49ip70/java_swing_is_tiny_on_hidpi_displays_what_can_be/][Java Swing is tiny on HiDPI displays, what can be done? : java]]
+* [[https://stackoverflow.com/questions/26877517/java-swing-on-high-dpi-screen][Java Swing on high-DPI screen - Stack Overflow]]

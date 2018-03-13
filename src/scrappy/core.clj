@@ -10,54 +10,58 @@
                          :style #{:bold :italic}
                          :size 18))
 
-(def frame (s/frame :title "Scrappy"))
+;; (defn display [content]
+;;   (s/config! frame :content content)
+;;   content)
 
-(defn display [content]
-  (s/config! frame :content content)
-  content)
+(defn make-ui
+  []
+  (s/frame
+   :title "Scrappy"
+   :on-close :exit
+   :content (s/border-panel
+             :north (s/border-panel
+                     :west (s/horizontal-panel
+                            :items ["Root folder: "
+                                    (s/text
+                                     :text (:root @config)
+                                     :columns 60)])
+                     :east (s/horizontal-panel
+                            :items ["Font size: "
+                                    (s/text
+                                     :text (:font-size @config)
+                                     :editable? false)
+                                    (s/button
+                                     :text "-"
+                                     :id "font-minus")
+                                    (s/button
+                                     :text "+"
+                                     :id "font-plus")]))
+             :center (s/left-right-split
+                      (s/scrollable
+                       (s/listbox
+                        :model (-> 'seesaw.core ns-publics keys sort)))
+                      (s/scrollable
+                       (s/text
+                        :multi-line? true
+                        :font "MONOSPACED-PLAIN-14"
+                        :text (java.net.URL. "http://clojure.com")))
+                      :divider-location 1/3)
+             :vgap 5 :hgap 5 :border 5)))
 
-(def lb (s/listbox :model (-> 'seesaw.core ns-publics keys sort)))
-
-(def area (s/text :multi-line? true :font "MONOSPACED-PLAIN-14"
-                  :text (java.net.URL. "http://clojure.com")))
-
-(def split (s/left-right-split
-            (s/scrollable lb)
-            (s/scrollable area)
-            :divider-location 1/3))
-
-(def group (s/button-group))
-
-(def north (s/border-panel
-            :west (s/horizontal-panel :items ["Root folder: "
-                                              (s/text :text (:root @config))]
-                                )
-            :east (s/grid-panel :items ["Font size:"
-                                        (s/text :text (:font-size @config)
-                                                :editable? false)
-                                        (s/button :text "-" :group group)
-                                        (s/button :text "+" :group group)]
-                                :columns 4
-                                :hgap 5)))
-
-(def root-field [(s/text "This is a text field.")])
-
-(def rbs (for [i [:source :doc]]
-           (s/radio :id i :class :type :text (name i))))
-
+(defn run
+  []
+  (s/invoke-later
+   (-> (make-ui)
+       s/pack!
+       s/show!)))
 
 (defn -main [& args]
   (s/native!)
-  (-> frame s/pack! s/show!)
-  (display (s/border-panel
-            :north north
-            :center split
-            :vgap 5 :hgap 5 :border 5))
+  (run)
+  ;; (s/config! frame :font (f/font :size (:font-size @config)))
 
-
-  #_(s/invoke-later
-   (-> (s/frame :title "Hello",
-              :content "Hello, Seesaw",
-              :on-close :exit)
-       s/pack!
-       s/show!)))
+  #_(let [b (s/select frame [:#font-minus])]
+    (s/listen b :action (fn [e]
+                          (swap! config update :font-size dec))))
+  )

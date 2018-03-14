@@ -45,7 +45,7 @@
 
 (def frame (s/frame :title "Scrappy"
                     ;; :on-close :exit
-                    :content content))
+                    :content (content)))
 
 (defn reload
   []
